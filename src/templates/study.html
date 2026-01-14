@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* 1. The Container (Scene) */
+    .scene {
+        width: 100%;
+        max-width: 600px;
+        height: 400px; /* Fixed height is needed for absolute positioning of faces */
+        margin: 2rem auto;
+        perspective: 1000px; /* Gives the 3D depth effect */
+    }
+
+    /* 2. The Moving Object (Card) */
+    .flashcard {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transition: transform 0.6s; /* Duration of the flip */
+        transform-style: preserve-3d;
+        cursor: pointer;
+    }
+
+    /* Class to trigger the flip */
+    .flashcard.is-flipped {
+        transform: rotateY(180deg);
+    }
+
+    /* 3. The Faces (Front & Back) */
+    .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden; /* Hides the back of the element when rotated */
+        -webkit-backface-visibility: hidden;
+
+        /* Styling the card look (PicoCSS-like) */
+        background-color: var(--pico-card-background-color);
+        box-shadow: var(--pico-card-box-shadow);
+        border-radius: var(--pico-border-radius);
+        padding: 2rem;
+
+        /* Centering Content */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Specific styles for Back Face */
+    .card-face-back {
+        transform: rotateY(180deg); /* Starts facing away */
+        background-color: #f9f9f9; /* Slightly different color for answer side */
+    }
+
+    /* Dark mode adjustment (optional) */
+    @media (prefers-color-scheme: dark) {
+        .card-face-back { background-color: #1a1a1a; }
+    }
+</style>
+
+<div style="text-align: center; margin-bottom: 1rem;">
+    <small>Cards due today: <strong>{{ count }}</strong></small>
+</div>
+
+<div class="scene">
+    <div class="flashcard" id="card">
+
+        <div class="card-face card-face-front">
+            <header style="margin-bottom: 2rem; color: #888; font-size: 0.8rem;">
+                {{ card.subject_name }}
+            </header>
+
+            <h2 style="overflow-y: auto; max-height: 200px;">{{ card.question }}</h2>
+
+            <footer style="margin-top: auto; width: 100%;">
+                <small style="color: #aaa;">(Click to show answer)</small>
+                <br><br>
+<!--                <button onclick="flipCard(event)" class="outline">Show Answer</button>-->
+            </footer>
+        </div>
+
+        <div class="card-face card-face-back">
+            <header style="margin-bottom: 1rem; color: #888; font-size: 0.8rem;">
+                Answer
+            </header>
+
+            <h3 style="overflow-y: auto; max-height: 180px; color: var(--pico-primary);">
+                {{ card.answer }}
+            </h3>
+
+            <footer style="margin-top: auto; width: 100%;">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem;">How well did you know this?</p>
+
+                <div class="grid">
+                    <a href="{{ url_for('study_submit', card_id=card.id, rating='hard') }}"
+                       role="button" class="contrast outline" style="font-size: 0.8rem;">
+                       Forgot
+                    </a>
+
+                    <a href="{{ url_for('study_submit', card_id=card.id, rating='medium') }}"
+                       role="button" class="secondary outline" style="font-size: 0.8rem;">
+                       Unsure
+                    </a>
+
+                    <a href="{{ url_for('study_submit', card_id=card.id, rating='easy') }}"
+                       role="button" class="primary" style="font-size: 0.8rem;">
+                       Easy
+                    </a>
+                </div>
+            </footer>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function flipCard(event) {
+        // Prevent button click from triggering standard behavior if needed
+        if (event) event.stopPropagation();
+
+        const card = document.getElementById('card');
+        card.classList.toggle('is-flipped');
+    }
+
+    // Optional: Allow clicking the whole card to flip (User Friendly)
+    document.getElementById('card').addEventListener('click', function(e) {
+        // Don't flip if they clicked a rating link/button
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+
+        this.classList.toggle('is-flipped');
+    });
+</script>
+
+{% endblock %}

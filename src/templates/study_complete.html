@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 3rem;">
+    <h1>🎉 All Caught Up!</h1>
+    <p>You have reviewed all your due cards for now.</p>
+    <p>Come back later or create new cards.</p>
+
+    <div class="grid" style="max-width: 400px; margin: 2rem auto;">
+        <a href="{{ url_for('flashcards') }}" role="button">Manage Cards</a>
+        <a href="{{ url_for('index') }}" role="button" class="secondary outline">Home</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if user_id %}
+        <hgroup style="text-align: center; margin-bottom: 3rem;">
+            <h1>Hello, {{ username }}!</h1>
+            <p>What would you like to get started with today?</p>
+        </hgroup>
+
+        <div style="margin-bottom: 2rem;">
+            <article>
+                <header><strong>⭐ Starred Past Papers</strong></header>
+
+                {% if favorites %}
+                    <ul style="margin-bottom: 0;">
+                        {% for fav in favorites %}
+                        <li style="margin-bottom: 0.5rem; list-style: none;">
+                            <a href="{{ url_for('static', filename='papers/' + fav.filename) }}" target="_blank">
+                                📄 {{ fav.year }} {{ fav.subject_name }} {{ fav.level }} - Paper {{ fav.paper_number }} ({{ fav.type }})
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p style="color: #777; font-style: italic;">
+                        You haven't starred any papers yet.
+                        Go to Biology or Chemistry pages to add some!
+                    </p>
+                {% endif %}
+            </article>
+        </div>
+
+        <div class="grid dashboard-grid">
+
+            <article>
+                <header style="padding: 0;">
+                    <div style="background-color: #e0e0e0; height: 150px; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 3rem;">🌿</span>
+                    </div>
+                </header>
+                <h3>Biology</h3>
+                <p>Search for past papers, mark schemes, and study resources for HL & SL Biology.</p>
+                <footer>
+                    <a href="{{ url_for('resources', subject='biology') }}" role="button" style="width: 100%;">
+                        Go to Biology
+                    </a>
+                </footer>
+            </article>
+
+            <article>
+                <header style="padding: 0;">
+                    <div style="background-color: #e0e0e0; height: 150px; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 3rem;">🧪</span>
+                    </div>
+                </header>
+                <h3>Chemistry</h3>
+                <p>Access database of Chemistry past papers, topic questions, and revision notes.</p>
+                <footer>
+                    <a href="{{ url_for('resources', subject='chemistry') }}" role="button" style="width: 100%;">
+                        Go to Chemistry
+                    </a>
+                </footer>
+            </article>
+
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <article style="display: inline-block; max-width: 600px;">
+                <header><strong>Ready to test your knowledge?</strong></header>
+                <p>Use the intelligent Flashcard system.</p>
+                <a href="{{ url_for('flashcards') }}" role="button" class="outline primary">
+                    Manage Flashcards
+                </a>
+            </article>
+        </div>
+
+    {% else %}
+        <div class="grid">
+            <div>
+                <h1>Welcome to BioBuddy</h1>
+                <p>
+                    Your ultimate companion for IB Biology and Chemistry revision.
+                    Organized past papers, spaced repetition flashcards, and more.
+                </p>
+                <div class="grid">
+                    <a href="{{ url_for('login') }}" role="button">Log In</a>
+                    <a href="{{ url_for('register') }}" role="button" class="secondary outline">Create Account</a>
+                </div>
+            </div>
+            <div>
+                <article style="background-color: #f0f8ff; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+                    <h3>IB Revision<br>Made Simple</h3>
+                </article>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}

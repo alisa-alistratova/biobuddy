@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header style="margin-bottom: 2rem;">
+    <h1>{{ subject }} Past Papers</h1>
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li>{{ subject }}</li>
+        </ul>
+    </nav>
+</header>
+
+<section class="filters-container box">
+    <form method="GET" action="{{ url_for('resources', subject=subject.lower()) }}">
+        <div class="grid">
+            <label>
+                Year
+                <select name="year" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    {% for y in available_years %}
+                        <option value="{{ y }}" {% if current_filters.year|int == y %}selected{% endif %}>
+                            {{ y }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                Level
+                <select name="level" onchange="this.form.submit()">
+                    <option value="">All Levels</option>
+                    <option value="HL" {% if current_filters.level == 'HL' %}selected{% endif %}>HL</option>
+                    <option value="SL" {% if current_filters.level == 'SL' %}selected{% endif %}>SL</option>
+                </select>
+            </label>
+
+            <label>
+                Type
+                <select name="type" onchange="this.form.submit()">
+                    <option value="">All Types</option>
+                    <option value="QP" {% if current_filters.type == 'QP' %}selected{% endif %}>Question Paper</option>
+                    <option value="MS" {% if current_filters.type == 'MS' %}selected{% endif %}>Mark Scheme</option>
+                </select>
+            </label>
+
+             <label>
+                Paper #
+                <select name="number" onchange="this.form.submit()">
+                    <option value="">All Papers</option>
+                    <option value="1" {% if current_filters.paper_number == '1' %}selected{% endif %}>Paper 1</option>
+                    <option value="2" {% if current_filters.paper_number == '2' %}selected{% endif %}>Paper 2</option>
+                    <option value="3" {% if current_filters.paper_number == '3' %}selected{% endif %}>Paper 3</option>
+                </select>
+            </label>
+
+            <label>
+                &nbsp;
+                <a href="{{ url_for('resources', subject=subject.lower()) }}" role="button" class="secondary outline" style="width: 100%;">
+                    Clear
+                </a>
+            </label>
+        </div>
+    </form>
+</section>
+
+<section>
+    {% if papers %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+
+            {% for paper in papers %}
+            <article>
+                <header>
+                    <hgroup style="margin-bottom: 0;">
+                        <h3>{{ paper.year }}</h3>
+                        <p>{{ paper.level }} • Paper {{ paper.paper_number }} ({{ paper.type }})</p>
+                    </hgroup>
+                </header>
+
+                <div style="text-align: center; padding: 1rem; color: #555;">
+                   📄 PDF Document
+                </div>
+
+                <footer>
+                    <div class="grid">
+                        <a href="{{ url_for('static', filename='papers/' + paper.filename) }}"
+                           target="_blank"
+                           role="button"
+                           style="white-space: nowrap;"> Open
+                        </a>
+
+                    {% if session.get('user_id') %}
+                        {% set is_fav = paper.id in fav_ids %}
+                        <button
+                            onclick="toggleFavorite(this, {{ paper.id }})"
+                            class="secondary {% if not is_fav %}outline{% endif %}"
+                            style="padding: 5px 10px;"
+                            title="Add to Favorites">
+                            {% if is_fav %}★{% else %}☆{% endif %}
+                        </button>
+                    {% endif %}
+
+                    </div>
+                </footer>
+            </article>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <article class="secondary">
+            <p>No papers found matching these filters.</p>
+        </article>
+    {% endif %}
+</section>
+
+{% endblock %}

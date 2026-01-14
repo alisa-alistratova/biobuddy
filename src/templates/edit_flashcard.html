@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article style="max-width: 600px; margin: 0 auto;">
+    <header>
+        <strong>Edit Flashcard</strong>
+        <a href="{{ url_for('flashcards') }}" style="float: right; font-size: 0.8rem;">Cancel</a>
+    </header>
+    
+    <form method="POST">
+        <label>
+            Subject
+            <select name="subject_id" required>
+                {% for s in subjects %}
+                    <option value="{{ s.id }}" {% if s.id == card.subject_id %}selected{% endif %}>
+                        {{ s.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Question (Front)
+            <textarea name="question" rows="3" required>{{ card.question }}</textarea>
+        </label>
+
+        <label>
+            Answer (Back)
+            <textarea name="answer" rows="3" required>{{ card.answer }}</textarea>
+        </label>
+
+        <div class="grid">
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+</article>
+{% endblock %}
